@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'jquery-3.7.1.min.js' %}"></script>
+  <script src="{% static 'bootstrap.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    #map {height:50vh; width:100%;}
+    #header-navbar, .navbar {background:linear-gradient(to right,#333399,#FFBBFF); padding:10px;}
+    .navbar {padding:1px;}
+    .btn-check {position:absolute; clip:rect(0,0,0,0); pointer-events:none;}
+    .btn-check:focus + .btn, .btn-check:checked + .btn:focus {box-shadow:none !important; outline:none !important;}
+    .btn-group .btn {width:150px; text-align:center;}
+    .info-img {width:230px; margin-bottom:5px; border-radius:5px; cursor:pointer;}
+  </style>
+</head>
+<body>
+  {% block content %}{% endblock %}
+  <script>
+    let map, service, markers=[], priceChartInstance=null, currentLabels={}, currentPrices={}, apartmentData=[];
+    function initMap(){
+      const center={lat:36.8151,lng:127.1139};
+      map=new google.maps.Map(document.getElementById("map"), {zoom:14, center});
+      fetch('/csv-data/').then(res=>res.json()).then(dataList=>{
+        apartmentData=dataList; renderMarkers(apartmentData);
+      }).catch(err=>console.error("CSV 데이터 로드 실패:", err));
+    }
+    function searchPlace(type){
+      const keyword=type.trim().toLowerCase();
+      renderMarkers(apartmentData.filter(d=>d.type.toLowerCase().includes(keyword)));
+    }
+    function searchFromInput(){
+      const input=document.getElementById("search-input").value.trim().toLowerCase();
+      renderMarkers(apartmentData.filter(d=>d.name.toLowerCase().includes(input)||d.type.toLowerCase().includes(input)));
+    }
+    function renderMarkers(dataList){
+      markers.forEach(m=>m.setMap(null)); markers=[];
+      const infoWindow=new google.maps.InfoWindow();
+      dataList.forEach(data=>{
+        const marker=new google.maps.Marker({position:{lat:data.lat,lng:data.lng}, map, title:data.name});
+        marker.addListener("mouseover", ()=> {
+          infoWindow.setContent(`<div style="font-size:18px; padding:0;">${data.name}<hr>현재 매매가 ${data.price3[4]}만원</div>`);
+          infoWindow.open(map, marker);
+        });
+        marker.addListener("mouseout", ()=> infoWindow.close());
+        marker.addListener("click", ()=> displayInfo(data));
+        markers.push(marker);
+      });
+    }
+    function displayInfo(data){
+      const panel=document.getElementById("info-panel");
+      const imagesHtml=(data.images||[]).map(url=>`<img src="${url}" class="info-img" border="0" width="200" height="200">`).join("");
+      panel.innerHTML=`<h4>${data.name}</h4>${imagesHtml}<p>${data.address}</p>
+        <div class="d-flex justify-content-center my-3 gap-2">
+          <button class="btn btn-outline-primary" onclick="updateChart('price1')">월세</button>
+          <button class="btn btn-outline-success" onclick="updateChart('price2')">전세</button>
+          <button class="btn btn-outline-danger" onclick="updateChart('price3')">매매</button>
+        </div>
+        <button id="favoriteBtn" class="btn btn-outline-light mt-2">즐겨찾기 등록</button>
+        <h5 class="text-center mt-4">${data.name} 가격 추이</h5>
+        <div style="width:90%; margin:auto;"><canvas id="priceChart" height="300"></canvas></div>`;
+      document.getElementById("favoriteBtn").onclick=()=> addFavorite({
+        title: data.name, location: data.address, price: data.price3?data.price3[4]:"정보 없음",
+        image_url: (data.images && data.images.length>0)?data.images[0]:""
+      });
+      currentLabels={price1:data.labels1||[], price2:data.labels2||[], price3:data.labels3||[]};
+      currentPrices={price1:data.price1||[], price2:data.price2||[], price3:data.price3||[]};
+      updateChart('price1');
+    }
+    function updateChart(type){
+      const ctx=document.getElementById("priceChart").getContext("2d");
+      if(priceChartInstance) priceChartInstance.destroy();
+      priceChartInstance=new Chart(ctx,{
+        type:"line",
+        data:{labels:currentLabels[type], datasets:[{label:"가격 (만원)", data:currentPrices[type], borderColor:"rgb(75,192,192)", backgroundColor:"rgba(75,192,192,0.2)", tension:0.4, fill:true}]},
+        options:{responsive:true, scales:{y:{ticks:{callback:value=>value.toLocaleString()+"만원"}}}}
+      });
+    }
+    document.addEventListener("click", e=>{
+      if(e.target.tagName==="IMG" && e.target.classList.contains("info-img")){
+        document.getElementById("modalImage").src=e.target.src;
+        new bootstrap.Modal(document.getElementById("imageModal")).show();
+      }
+    });
+    function getCookie(name){
+      let cookieValue=null;
+      if(document.cookie && document.cookie!==""){
+        const cookies=document.cookie.split(";");
+        for(let i=0;i<cookies.length;i++){
+          const cookie=cookies[i].trim();
+          if(cookie.substring(0,name.length+1)===(name+"=")){
+            cookieValue=decodeURIComponent(cookie.substring(name.length+1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    function addFavorite(data){
+      fetch('/api/favorite/add/', {
+        method:"POST",
+        headers:{"X-CSRFToken":getCookie("csrftoken"),"Content-Type":"application/x-www-form-urlencoded"},
+        body:new URLSearchParams(data)
+      }).then(res=>res.json()).then(()=>alert("즐겨찾기에 추가되었습니다!"));
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAst-3f1gIp7yTyXInnl5s7RzJuG9u2o2U&libraries=places&callback=initMap" async defer></script>
+  <div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-fullscreen m-0">
+      <div class="modal-content bg-dark border-0">
+        <div class="modal-body p-0 d-flex justify-content-center align-items-center">
+          <img id="modalImage" src="" class="w-100 h-100" style="object-fit:contain;">
+          <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

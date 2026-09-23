@@ -1,0 +1,125 @@
+{% extends "base3.html" %}
+{% load static %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light border-bottom">
+  <a class="navbar-brand d-inline-flex p-2 bd-highlight text-white" href="/">
+    <img src="{% static 'img/goroom2.png' %}" style="width:50%;height:50%;float:left;margin:0 20px 0 30px">
+  </a>
+  <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <form action="{% url 'common:logout' %}" method="POST" class="d-inline-block">
+          <div class="form-group mb-0">
+            {% csrf_token %}
+            <button class="btn btn-outline-dark text-white" type="submit" style="float:left">{{ user.username }} <span>(로그아웃)</span></button>
+          </div>
+        </form>
+        <button class="btn btn-outline-dark text-white" type="button" style="margin:auto;float:right;">
+          <a class="text-white" href="{% url 'pybo:my_favorites_page' %}">나만의 즐겨찾기</a>
+        </button>
+      </li>
+    </ul>
+    {% if user.username == "mingdol05" %}
+      <button class="btn btn-outline-dark text-white" style="margin:auto;float:right;">
+        <a class="text-white" href="/">수정</a>
+      </button>
+    {% endif %}
+  </div>
+</nav>
+
+<div id="header-navbar" class="container-fluid">
+  <div class="row">
+    <div class="col-md-8" style="height:80vh;">
+      <div class="d-flex justify-content-center mt-4 mb-3">
+        <div class="input-group w-75">
+          <input id="search-input" type="text" class="form-control" placeholder="지역 검색">
+          <button class="btn btn-outline-light" type="button" onclick="searchFromInput()">검색</button>
+        </div>
+      </div>
+      <div class="btn-group" role="group">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="searchPlace('아파트')" checked>
+        <label class="btn btn-outline-light" for="btnradio1">아파트</label>
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="searchPlace('오피스텔')">
+        <label class="btn btn-outline-light" for="btnradio2">오피스텔</label>
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" onclick="searchPlace('빌라')">
+        <label class="btn btn-outline-light" for="btnradio3">빌라</label>
+      </div>
+      <div id="map" style="width:100%;height:calc(100% - 150px);"></div>
+    </div>
+    <div class="col-md-4 text-white" id="info-panel" style="height:80vh;overflow-y:auto;border-left:1px solid #ccc;padding:10px;">
+      <h3>상세정보</h3>
+      <p>마커를 눌러 정보를 확인하세요.</p>
+      <div id="marker-details"></div>
+      <button id="favoriteBtn" class="btn btn-outline-light mt-2" style="display:none;">즐겨찾기 등록</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-fullscreen m-0">
+    <div class="modal-content bg-dark border-0">
+      <div class="modal-body p-0 d-flex justify-content-center align-items-center">
+        <img id="modalImage" src="" class="w-100 h-100" style="object-fit:contain;">
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function getCookie(name) {
+  let value = null;
+  document.cookie && document.cookie.split(';').forEach(c => {
+    c = c.trim();
+    if (c.startsWith(name + '=')) {
+      value = decodeURIComponent(c.substring(name.length + 1));
+    }
+  });
+  return value;
+}
+
+function addFavorite(data) {
+  fetch("{% url 'pybo:add_favorite' %}", {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams(data)
+  })
+  .then(res => res.json())
+  .then(json => {
+    if (json.status === 'success') {
+      alert('즐겨찾기에 추가되었습니다!');
+    } else if (json.status === 'error') {
+      alert(json.message || '이미 즐겨찾기에 저장되어 있습니다.');
+    } else {
+      alert('알 수 없는 응답입니다.');
+    }
+  })
+  .catch(() => {
+    alert('오류가 발생했습니다. 다시 시도해주세요.');
+  });
+}
+
+function onMarkerClick(info) {
+  document.getElementById('marker-details').innerHTML = `
+    <h4>${info.title}</h4>
+    <p>${info.location}</p>
+    <p>${info.price}</p>
+    <img src="${info.image_url}" style="max-width:100%;">
+  `;
+  const fb = document.getElementById('favoriteBtn');
+  fb.style.display = 'inline-block';
+  fb.onclick = () => addFavorite({
+    title: info.title,
+    location: info.location,
+    price: info.price,
+    image_url: info.image_url
+  });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block title %}상세 정보{% endblock %}
+
+{% block content %}
+<div class="jumbotron jumbotron-single d-flex align-items-center"
+     style="background-image: url('{% static 'img/bg-seoul.jpg' %}')">
+    <div class="container text-center">
+        <h1 class="display-2 mb-4">상세 정보</h1>
+    </div>
+</div>
+
+<section id="who-we-are" class="bg-white">
+    <div class="container">
+        <div class="section-content">
+            <div class="title-wrap" data-aos="fade-up">
+                <h2 class="section-title"><b>고룸(GOROOM)</b>이란?</h2>
+            </div>
+            <div class="title-wrap" data-aos="fade-up">
+                <p class="section-title" style="font-size: 20px;">
+                    <br>나만의 집과 방을 고른다는 의미의 고룸과<br>나만의 집과 방으로 향한다 라는 영어 (GO ROOM)의 이중 의미 입니다.
+                </p>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4 col-sm-6" data-aos="fade-up">
+                    <img class="rounded-circle" src="{% static 'img/icons/animat-checkmark.gif' %}" alt="icon" width="140" height="140">
+                    <h5 class="mb-4">Simple and Easy</h5>
+                    <p>깔끔하고 쉬운 나만의 집 찾기 </p>
+                </div>
+                <div class="col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+                    <img class="rounded-circle" src="{% static 'img/icons/animat-see.gif' %}" alt="icon" width="140" height="140">
+                    <h5 class="mb-4">Easy to Search</h5>
+                    <p>편리한 검색 기능</p>
+                </div>
+                <div class="col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="400">
+                    <img class="rounded-circle" src="{% static 'img/icons/animat-responsive.gif' %}" alt="icon" width="140" height="140">
+                    <h5 class="mb-4">Fully Responsive Map</h5>
+                    <p>사용자에 따라 변화하는 지도</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="cta" class="bg-fixed overlay" style="background-image: url('{% static 'img/bg.jpg' %}')">
+    <div class="container">
+        <div class="section-content" data-aos="fade-up">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="mb-2">"더욱 더 편리한 내 집 찾기"</h2>
+                    <p>고룸(GOROOM)에서 다같이 골라봐요 !</p>
+                    <a class="btn btn-outline-primary btn-lg" href="{% url 'pybo:index' %}">HOME</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

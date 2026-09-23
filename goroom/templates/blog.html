@@ -1,0 +1,100 @@
+{% extends 'base4.html' %}
+{% load static %}
+
+{% block title %}게시판{% endblock %}
+
+{% block content %}
+
+
+<!-- ✅ Blog Header -->
+<div class="jumbotron jumbotron-single d-flex align-items-center" style="background-image: url({% static 'img/bg-seoul.jpg' %})">
+    <div class="container text-center">
+        <h1 class="display-2 mb-4">블로그</h1>
+    </div>
+</div>
+
+<!-- ✅ Blog Section -->
+<section id="blog" class="bg-grey">
+    <div class="container">
+        <div class="section-content">
+            <div class="title-wrap mb-5" data-aos="fade-up">
+                <h2 class="section-title"><b>"내 손안의 부동산 생활 포털"</b></h2>
+                <p class="section-sub-title"><hr>단순한 검색 플랫폼을 넘어서 실생활에 밀접한 데이터를 함께 제공한다는 의미입니다.
+                                             <hr>기존의 다방, 직방과 같은 상용 플랫폼이 정보 제공에 있어 한정적이라는 한계를 인식하고, <br>GoRoom은 통합성과 직관성에 중점을 두고 사용자 경험을 개선하고자 기획되었습니다.<hr></p>
+            </div>
+            <div class="row">
+                <!-- Blog content goes here -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="blog1" class="bg-grey">
+    <div class="container">
+        <div class="section-content">
+            <div class="title-wrap mb-5" data-aos="fade-up">
+                <h2 class="section-title">프로젝트 <b>활동일지</b></h2>
+                <p class="section-sub-title">진행 과정과 함께한 순간들을 기록합니다.</p>
+            </div>
+            <div class="row">
+
+                <!-- 활동 카드 1 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">1주차 - 기획 및 역할 분담</h5>
+                            <p class="card-text">
+                                - 프로젝트 주제를 정하고, 팀원별로 역할을 나눈 후, 개발 환경 새팅 진행.<br><br>
+                                - Django 프로젝트 생성 공유 장소 생성.<br><br>
+                                - 사이트 기본 구성 회의 후 활용할 API 선정.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 활동 카드 2 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">2주차 - API 연동 작업</h5>
+                            <p class="card-text">
+                                - 메인 홈페이지 제작, 로그인 시스템 구축, 서버 구축.<br><br>
+                                - 구글 맵스 api 에 아파트, 빌라, 오피스텔 등 건물이 나오게 설정, 시세 분석 그래프 까지 제작.<br><br>
+                                - 메인 홈페이지에 날씨 api와 환율 api와 뉴스 정보등을 한눈에 볼 수 있는 폼을 제작.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 활동 카드 3 -->
+                <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">3주차 - 마무리 디테일 작업</h5>
+                            <p class="card-text">
+                                - goroom에 대한 설명이 있는 상세정보 페이지 제작, 메인페이지에 뉴스 폼 제작.<br><br>
+                                - 건물 상세 페이지 제작 -> 시세 그래프, 교통 정보, 주변 편의시설을 함께 볼 수 있도록 구성.<br><br>
+                                - 즐겨찾기 기능 구현하고, 프론트엔드 디자인 통일 작업 후 전체 기능 통합 테스트.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="cta" class="bg-fixed overlay" style="background-image: url('{% static 'img/bg.jpg' %}')">
+    <div class="container">
+        <div class="section-content" data-aos="fade-up">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <a class="btn btn-outline-primary btn-lg" href="{% url 'pybo:index' %}">HOME</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

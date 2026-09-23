@@ -1,0 +1,66 @@
+{% extends "base3.html" %}
+{% load static %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light border-bottom">
+  <a class="navbar-brand d-inline-flex p-2 bd-highlight text-white" href="/">
+    <img src="{% static 'img/goroom2.png' %}" style="width:50%; height:50%; float:left; margin-left:30px; margin-right:20px">
+  </a>
+  <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <form action="{% url 'common:logout' %}" method="POST" class="d-inline-block">
+          <div class="form-group mb-0">
+            {% csrf_token %}
+            <button class="btn btn-outline-dark text-white" type="submit" style="float:left">
+              {{ user.username }} <span>(로그아웃)</span>
+            </button>
+          </div>
+        </form>
+        <button class="btn btn-outline-dark text-white" type="button" style="margin:auto; float:right;">
+          <a class="text-white" href="/pybo">이전 페이지</a>
+        </button>
+      </li>
+    </ul>
+    {% if user.username == "mingdol05" %}
+    <button class="btn btn-outline-dark text-white" type="submit" style="margin:auto; float:right;">
+      <a class="text-white" href="/">수정</a>
+    </button>
+    {% endif %}
+  </div>
+</nav>
+
+
+<div id="header-navbar" class="container-fluid" style="background: linear-gradient(to right, #333399, #FFBBFF); padding: 10px;">
+  <div class="row">
+
+    <div class="col-md-12 text-white" style="min-height:80vh; padding:20px;">
+      <h2 class="mb-4">{{ user.username }}님의 즐겨찾기</h2>
+      <div class="list-group">
+        {% for favorite in favorites %}
+          <div class="list-group-item d-flex justify-content-between align-items-center" style = "color:#000000">
+            <div>
+              <h5 class="mb-1" style = "color:#000000">{{ favorite.title }}</h5>
+              <p class="mb-0" style = "color:#000000">{{ favorite.location }}</p>
+              {% if favorite.price %}
+                <small style = "color:#000000">{{ favorite.price }}만원</small>
+              {% endif %}
+            </div>
+            <form action="{% url 'pybo:remove_favorite' favorite.id %}" method="post" class="mb-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+            </form>
+          </div>
+        {% empty %}
+          <div class="list-group-item">
+            <p class="mb-0">즐겨찾기가 없습니다.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

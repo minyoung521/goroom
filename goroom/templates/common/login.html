@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <!-- 로그인 제목 -->
+      <div class="text-center mb-4">
+        <h4>로그인</h4>
+      </div>
+
+      <form method="post" action="{% url 'common:login' %}" class="post-form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% include "form_errors.html" %}
+
+        <div class="form-group">
+          <label for="username">사용자ID</label>
+          <input type="text" class="form-control" id="username" name="username"
+                 value="{{ form.username.value|default_if_none:'' }}">
+        </div>
+
+        <div class="form-group">
+          <label for="password">비밀번호</label>
+          <input type="password" class="form-control" id="password" name="password"
+                 value="{{ form.password.value|default_if_none:'' }}">
+        </div>
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary px-5">로그인</button>
+        </div>
+      </form>
+
+      <!-- 회원이 아니신가요? + 회원가입 버튼 -->
+      <div class="text-center mt-4">
+        <p class="mb-2">회원이 아니신가요?</p>
+        <a href="{% url 'common:signup' %}" class="btn btn-outline-secondary">
+          계정을 만들기
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

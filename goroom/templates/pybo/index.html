@@ -1,0 +1,160 @@
+{% extends "base2.html" %}
+{% load static %}
+{% block title %}메인 페이지{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background: linear-gradient(to right, #5f4b8b, #e04fd0);
+    font-family: 'Montserrat', sans-serif;
+  }
+  .center-logo {
+    line-height: .9;
+    font-weight: bold;
+    border: 15px solid #fff;
+    border-radius: 50px;
+    padding-right: 60px;
+    width: 400px;
+    height: 350px;
+    margin-left: 20px;
+    margin-top: 100px;
+    font-size: 9rem;
+    opacity: 0;
+    animation: 1s fadeInFromTop cubic-bezier(0.785, 0.135, 0.15, 0.86) 1s forwards;
+    animation-delay: .8s;
+  }
+  .center-logo img {
+    width: 140%;
+    max-width: 400px;
+    margin-top: 30px;
+    height: auto;
+  }
+  .center-logo .clickup {
+    font-size: 32px;
+    font-weight: flex;
+    text-align: center;
+    color: #A566FF;
+    margin-top: 20px;
+    margin-left: 55px;
+  }
+  .center-logo .footer-text {
+    font-size: 16px;
+    color: #333;
+    margin-top: 50px;
+  }
+  .news-section {
+    width: 30%;
+    background: white;
+    border-radius: 50px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    margin-top: 12%;
+  }
+</style>
+
+<nav id="header-navbar" class="navbar navbar-expand-lg py-4">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center text-white" href="/">
+      <img src="{% static 'img/goroom2.png' %}" style="width:8%; float:left; position:absolute; top:10px; left:0; margin-left:70px;">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-nav-header">
+      <span class="lnr lnr-menu"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar-nav-header">
+      <ul class="navbar-nav ml-auto" style="gap: 15px; display: flex; align-items: center;">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <span class="nav-link">{{ user.username }}님, 환영합니다!</span>
+          </li>
+          <li class="nav-item">
+            <form method="post" action="{% url 'common:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-dark" style="font-size: 15px; padding: 10px;">로그아웃</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'common:login' %}">로그인</a>
+          </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="about.html">상세정보</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="blog.html">블로그</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="d-flex justify-content-between align-items-start flex-wrap px-5" style="height: 85vh; padding-top: 100px;">
+  <div class="d-flex flex-column" style="width: 25%; gap: 50px;">
+    <!-- 날씨 -->
+    <div style="background: white; border-radius: 50px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); text-align: center;">
+      {% if temperature %}
+      <div class="text-center" style="font-size:25px;">
+        <img src="{{ icon }}" alt="날씨 아이콘" style="width: 70px;"><br>
+        <strong>{{ temperature }} °C</strong>
+        <p style="margin: 10px 0 0;">체감: {{ fell_temperature }}</p>
+        <p style="margin: 0;">습도: {{ humidity }}</p>
+        <p style="margin: 0;">풍속: {{ wind_speed }}</p>
+        <small>{{ base_date }}</small>
+      </div>
+      {% else %}
+      <p>날씨 정보를 불러올 수 없습니다.</p>
+      {% endif %}
+    </div>
+
+    <!-- 환율 -->
+    <div style="background: white; border-radius: 50px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); text-align: center;">
+      <div style="font-family: 'Montserrat', sans-serif; font-size: 20px; color: #333;">
+        {% if show_exchange %}
+          <p><i class="bi bi-currency-dollar"></i> USD: {{ exchange.usd }} 원</p>
+          <p><i class="bi bi-currency-euro"></i> EUR: {{ exchange.eur }} 원</p>
+          <p><i class="bi bi-currency-yen"></i> JPY: {{ exchange.jpy }} 원</p>
+        {% endif %}
+        <small>{{ base_date }}</small>
+        {% if not show_exchange %}
+          <p style="color: #666; font-size: 0.9em; margin-top: 4px;">
+            공휴일 혹은 주말이라 환율 정보가 제공되지 않습니다.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- 중앙 로고 -->
+  <div class="center-logo d-flex align-items-center text-white flex-column">
+    {% if user.is_authenticated %}
+    <a href="/pybo">
+      <img src="{% static 'img/goroom3.png' %}" alt="중앙로고">
+    </a>
+    {% else %}
+    <a href="javascript:void(0);" onclick="myFun()">
+      <img src="{% static 'img/goroom3.png' %}" alt="중앙로고">
+    </a>
+    {% endif %}
+    <p class="clickup" style="text-align: center; margin-top: 10px;">Click UP</p>
+  </div>
+
+  <!-- 뉴스 -->
+  <div class="news-section">
+    <div class="news-page" style="font-family: 'Montserrat', sans-serif; font-size: 20px; color: #333;">
+      <h2>오늘의 뉴스</h2>
+      <small>{{ base_date }}</small>
+      <p><a href="https://www.segye.com/newsView/20250430511266"> 대법, 이재명 '선거법' 상고심 선고 TV 생중계 허용 </a></p>
+      <p><a href="https://sports.hankooki.com/news/articleView.html?idxno=6896737"> 홈런-볼넷-도루… ‘50-50’ 오타니가 살아났다[초점] </a></p>
+      <p><a href="https://www.obsnews.co.kr/news/articleView.html?idxno=1481613"> 국민의힘 '김문수·한동훈' 오늘 결선 토론 </a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function myFun(){
+    alert('로그인 후 이용해주세요!');
+    window.location.href = "/common/login/";
+  }
+</script>
+{% endblock %}

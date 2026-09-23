@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}Roxy by GetTemplates.co{% endblock %}</title>
+    <meta name="description" content="Roxy">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/select2/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/owlcarousel/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/lightcase/lightcase.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400|Work+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
+    <style>
+      .container-fluid{padding:0 !important; }
+    </style>
+</head>
+<body data-spy="scroll" data-target="#navbar" class="static-layout">
+
+<div class="container-fluid" style="position:relative">
+    {% block content %}{% endblock %}
+
+    <footer class="mastfoot my-3">
+        <div class="inner container">
+            <div class="row">
+                <div class="col-lg-4 col-md-12 d-flex align-items-center"></div>
+                <div class="col-lg-4 col-md-12"></div>
+            </div>
+        </div>
+    </footer>
+</div>
+    <!-- External JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+    <script src="{% static 'vendor/bootstrap/popper.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'vendor/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'vendor/stellar/jquery.stellar.js' %}"></script>
+    <script src="{% static 'vendor/isotope/isotope.min.js' %}"></script>
+    <script src="{% static 'vendor/lightcase/lightcase.js' %}"></script>
+    <script src="{% static 'vendor/waypoints/waypoint.min.js' %}"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="{% static 'js/app.min.js' %}"></script>
+</body>
+</html>

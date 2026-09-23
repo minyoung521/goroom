@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>가격 그래프</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #chart-container {
+            width: 90%;
+            max-width: 1000px;
+            height: auto;
+            margin: auto;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">두정동 프라지움1차 가격 추이</h1>
+    <div id="chart-container">
+        <canvas id="priceChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        const priceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ labels|safe }},
+                datasets: [{
+                    label: '가격 (원)',
+                    data: {{ values|safe }},
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5, // 마우스 호버 포인트 크기
+                    pointHoverRadius: 7, // 호버 시 마커 크기
+                    pointHoverBackgroundColor: 'red'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,  // 그래프 비율 자유롭게 조정
+                plugins: {
+                    tooltip: {
+                        enabled: true, // 마우스 올리면 마커 툴팁
+                        callbacks: {
+                            label: function(context) {
+                                return context.formattedValue + '원';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString() + '원';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
